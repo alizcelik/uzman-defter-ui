@@ -1,13 +1,5 @@
 <template>
-  <div
-    style="
-      flex: auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    "
-  >
+  <div>
     <h1>Projects Page</h1>
     <RouterLink to="/">Go to Home</RouterLink>
     <RouterLink :to="{ name: '/projects/[id]', params: { id: 1 } }">Go to Project 1</RouterLink>

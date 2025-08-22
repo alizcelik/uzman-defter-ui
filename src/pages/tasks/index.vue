@@ -1,13 +1,5 @@
 <template>
-  <div
-    style="
-      flex: auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    "
-  >
+  <div>
     <h1>tasks Page</h1>
     <RouterLink to="/">Go to Home</RouterLink>
 
