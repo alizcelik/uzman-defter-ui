@@ -19,13 +19,16 @@
     "supabase:init": "supabase init",
     "supabase:login": "supabase login",
     "supabase:link": "supabase link --project-ref ruztowpsuplphhoukcer",
-    "db:migrate:new": "supabase migration new projects-schema",
+    "db:migrate:new": "supabase migration new",
     "db:reset": "supabase db reset --linked",
-    "db:seed": "node --env-file=.env database/seed.js"
+    "db:seed": "node --env-file=.env database/seed.js",
+    "supabase:types": "npx supabase gen types typescript --project-id ruztowpsuplphhoukcer --schema public > database/types.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.55.0",
+    "@tailwindcss/vite": "^4.1.12",
     "pinia": "^3.0.3",
+    "tailwindcss": "^4.1.12",
     "vue": "^3.5.18",
     "vue-router": "^4.5.1"
   },
