@@ -1,4 +1,4 @@
-import './index.css'
+import '@/index.css'
 import 'iconify-icon'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

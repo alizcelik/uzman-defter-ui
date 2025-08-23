@@ -1,22 +1,21 @@
 <template>
   <div>
-    <h1>Projects Page</h1>
-    <RouterLink to="/">Go to Home</RouterLink>
-    <RouterLink :to="{ name: '/projects/[id]', params: { id: 1 } }">Go to Project 1</RouterLink>
-    <p v-if="!projects">Loading projects...</p>
-    <ul v-else>
-      <li v-for="project in projects" :key="project.id">
-        <RouterLink :to="{ name: '/projects/[id]', params: { id: project.id } }">{{
-          project.name
-        }}</RouterLink>
-      </li>
-    </ul>
+    <DataTable v-if="projects" :columns="columns" :data="projects">
+      <template #cell-name="{ cell }">
+        <RouterLink :to="`/projects/${cell.row.original.slug}`">
+          {{ cell.getValue() }}
+        </RouterLink>
+      </template>
+    </DataTable>
   </div>
 </template>
 <script setup lang="ts">
 import { supabase } from '@/lib/supabaseClient'
-import { ref } from 'vue'
+import { h, ref } from 'vue'
 import type { Tables } from '../../../database/types'
+import type { ColumnDef } from '@tanstack/vue-table'
+import DataTable from '@/components/ui/data-table/DataTable.vue'
+import { RouterLink } from 'vue-router'
 
 const projects = ref<Tables<'projects'>[] | null>(null)
 ;(async () => {
@@ -28,5 +27,27 @@ const projects = ref<Tables<'projects'>[] | null>(null)
     projects.value = data
   }
 })()
+
+const columns: ColumnDef<Tables<'projects'>>[] = [
+  {
+    accessorKey: 'name',
+    header: () => h('div', { class: 'text-left' }, 'Name'),
+  },
+  {
+    accessorKey: 'slug',
+    header: () => h('div', { class: 'text-left' }, 'Slug'),
+  },
+  {
+    accessorKey: 'status',
+    header: () => h('div', { class: 'text-left' }, 'Status'),
+  },
+  {
+    accessorKey: 'created_at',
+    header: () => h('div', { class: 'text-left' }, 'Created At'),
+  },
+  {
+    accessorKey: 'collaborators',
+    header: () => h('div', { class: 'text-left' }, 'Collaborators'),
+  },
+]
 </script>
-<style lang=""></style>

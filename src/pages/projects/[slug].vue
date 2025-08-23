@@ -2,11 +2,11 @@
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
-const params = route.params as { id: string | number }
+const params = route.params as { slug: string }
 </script>
 
 <template>
   <div>
-    <h1>Project {{ params.id }}</h1>
+    <h1>Project {{ params.slug }}</h1>
   </div>
 </template>
