@@ -18,15 +18,25 @@ import DataTable from '@/components/ui/data-table/DataTable.vue'
 import { RouterLink } from 'vue-router'
 
 const projects = ref<Tables<'projects'>[] | null>(null)
-;(async () => {
+// ;(async () => {
+//   const { data, error } = await supabase.from('projects').select('*')
+//   if (error) {
+//     console.error('Error fetching projects:', error)
+//   } else {
+//     projects.value = data
+//   }
+// })()
+
+const getProjects = async () => {
   const { data, error } = await supabase.from('projects').select('*')
   if (error) {
     console.error('Error fetching projects:', error)
   } else {
-    console.log('Projects:', data)
     projects.value = data
   }
-})()
+}
+
+await getProjects()
 
 const columns: ColumnDef<Tables<'projects'>>[] = [
   {
