@@ -16,7 +16,9 @@ import type { Tables } from '../../../database/types'
 import type { ColumnDef } from '@tanstack/vue-table'
 import DataTable from '@/components/ui/data-table/DataTable.vue'
 import { RouterLink } from 'vue-router'
+import { usePageStore } from '@/stores/page'
 
+usePageStore().pageData.title = 'Projects'
 const projects = ref<Tables<'projects'>[] | null>(null)
 // ;(async () => {
 //   const { data, error } = await supabase.from('projects').select('*')
