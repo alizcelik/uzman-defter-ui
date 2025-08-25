@@ -1,36 +1,20 @@
 <template>
   <div>
-    <DataTable v-if="projects" :columns="columns" :data="projects">
-      <template #cell-name="{ cell }">
-        <RouterLink :to="`/projects/${cell.row.original.slug}`">
-          {{ cell.getValue() }}
-        </RouterLink>
-      </template>
-    </DataTable>
+    <DataTable v-if="projects" :columns="projectColumns" :data="projects"> </DataTable>
   </div>
 </template>
 <script setup lang="ts">
-import { supabase } from '@/lib/supabaseClient'
-import { h, ref } from 'vue'
-import type { Tables } from '../../../database/types'
-import type { ColumnDef } from '@tanstack/vue-table'
+import { ref } from 'vue'
 import DataTable from '@/components/ui/data-table/DataTable.vue'
-import { RouterLink } from 'vue-router'
 import { usePageStore } from '@/stores/page'
+import { projectsQuery, type Projects } from '../tasks/utils/supaQueries'
+import { projectColumns } from '../tasks/utils/tableColumns/projectColumns'
 
 usePageStore().pageData.title = 'Projects'
-const projects = ref<Tables<'projects'>[] | null>(null)
-// ;(async () => {
-//   const { data, error } = await supabase.from('projects').select('*')
-//   if (error) {
-//     console.error('Error fetching projects:', error)
-//   } else {
-//     projects.value = data
-//   }
-// })()
+const projects = ref<Projects | null>(null)
 
 const getProjects = async () => {
-  const { data, error } = await supabase.from('projects').select('*')
+  const { data, error } = await projectsQuery
   if (error) {
     console.error('Error fetching projects:', error)
   } else {
@@ -39,27 +23,4 @@ const getProjects = async () => {
 }
 
 await getProjects()
-
-const columns: ColumnDef<Tables<'projects'>>[] = [
-  {
-    accessorKey: 'name',
-    header: () => h('div', { class: 'text-left' }, 'Name'),
-  },
-  {
-    accessorKey: 'slug',
-    header: () => h('div', { class: 'text-left' }, 'Slug'),
-  },
-  {
-    accessorKey: 'status',
-    header: () => h('div', { class: 'text-left' }, 'Status'),
-  },
-  {
-    accessorKey: 'created_at',
-    header: () => h('div', { class: 'text-left' }, 'Created At'),
-  },
-  {
-    accessorKey: 'collaborators',
-    header: () => h('div', { class: 'text-left' }, 'Collaborators'),
-  },
-]
 </script>
