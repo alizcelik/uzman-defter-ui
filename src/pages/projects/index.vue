@@ -7,8 +7,8 @@
 import { ref } from 'vue'
 import DataTable from '@/components/ui/data-table/DataTable.vue'
 import { usePageStore } from '@/stores/page'
-import { projectsQuery, type Projects } from '../tasks/utils/supaQueries'
-import { projectColumns } from '../tasks/utils/tableColumns/projectColumns'
+import { projectsQuery, type Projects } from '../../utils/supaQueries'
+import { projectColumns } from '../../utils/tableColumns/projectColumns'
 
 usePageStore().pageData.title = 'Projects'
 const projects = ref<Projects | null>(null)

@@ -5,8 +5,8 @@
 import { ref } from 'vue'
 import DataTable from '@/components/ui/data-table/DataTable.vue'
 import { usePageStore } from '@/stores/page'
-import { tasksWithProjectsQuery, type TasksWithProjects } from './utils/supaQueries'
-import { taskColumns } from './utils/tableColumns/tasksColumns'
+import { tasksWithProjectsQuery, type TasksWithProjects } from '../../utils/supaQueries'
+import { taskColumns } from '../../utils/tableColumns/tasksColumns'
 
 usePageStore().pageData.title = 'Tasks'
 

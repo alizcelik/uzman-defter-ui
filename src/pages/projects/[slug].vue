@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { projectQuery, type Project } from '../tasks/utils/supaQueries'
+import { projectQuery, type Project } from '../../utils/supaQueries'
 import { ref, watch } from 'vue'
 import Table from '@/components/ui/table/Table.vue'
 import TableRow from '@/components/ui/table/TableRow.vue'
