@@ -3,7 +3,7 @@ import type { QueryData } from '@supabase/supabase-js'
 
 export const tasksWithProjectsQuery = supabase
   .from('tasks')
-  .select(` * , projects (id, name, slug)`)
+  .select(` * , projects (id, name, slug),`)
 
 export type TasksWithProjects = QueryData<typeof tasksWithProjectsQuery>
 

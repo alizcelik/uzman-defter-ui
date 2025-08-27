@@ -84,15 +84,17 @@ import Avatar from '@/components/ui/avatar/Avatar.vue'
 import AvatarImage from '@/components/ui/avatar/AvatarImage.vue'
 import AvatarFallback from '@/components/ui/avatar/AvatarFallback.vue'
 import Button from '@/components/ui/button/Button.vue'
+import { useErrorStore } from '@/stores/error'
 
 const route = useRoute('/tasks/[id]')
 
 const task = ref<Task | null>(null)
 
 const getTask = async () => {
-  const { data, error } = await taskQuery(route.params.id as unknown as number)
+  const { data, error, status } = await taskQuery(route.params.id as unknown as number)
   if (error) {
     console.error('Error fetching task:', error)
+    useErrorStore().setError({ error, customCode: status })
   }
   task.value = data
 }

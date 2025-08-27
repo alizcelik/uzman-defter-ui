@@ -7,16 +7,18 @@ import DataTable from '@/components/ui/data-table/DataTable.vue'
 import { usePageStore } from '@/stores/page'
 import { tasksWithProjectsQuery, type TasksWithProjects } from '../../utils/supaQueries'
 import { taskColumns } from '../../utils/tableColumns/tasksColumns'
+import { useErrorStore } from '@/stores/error'
 
 usePageStore().pageData.title = 'Tasks'
 
 const tasks = ref<TasksWithProjects | null>(null)
 const getTasks = async () => {
-  const { data, error } = await tasksWithProjectsQuery
+  const { data, error, status } = await tasksWithProjectsQuery
   if (error) {
     console.error('Error fetching tasks:', error)
+    console.error('Error status code:', status)
+    useErrorStore().setError({ error, customCode: status })
   } else {
-    console.log('tasks:', data)
     tasks.value = data
   }
 }

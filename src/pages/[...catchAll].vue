@@ -1,13 +1,9 @@
-<template>
-  <div>
-    <h1>404 Not Found</h1>
-    <p>Path: {{ route.path }}</p>
-    <RouterLink to="/">Go to Home</RouterLink>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
+import { useErrorStore } from '@/stores/error'
 
-const route = useRoute()
+useErrorStore().setError({ error: 'Page not found', customCode: 404 })
 </script>
+
+<template>
+  <div></div>
+</template>

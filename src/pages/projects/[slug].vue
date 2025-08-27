@@ -12,15 +12,17 @@ import AvatarFallback from '@/components/ui/avatar/AvatarFallback.vue'
 import TableHeader from '@/components/ui/table/TableHeader.vue'
 import TableBody from '@/components/ui/table/TableBody.vue'
 import { usePageStore } from '@/stores/page'
+import { useErrorStore } from '@/stores/error'
 
 const route = useRoute('/projects/[slug]')
 
 const project = ref<Project | null>(null)
 
 const getProject = async (slug: string) => {
-  const { data, error } = await projectQuery(slug)
+  const { data, error, status } = await projectQuery(slug)
   if (error) {
     console.error('Error fetching project:', error)
+    useErrorStore().setError({ error, customCode: status })
   }
   project.value = data
 }
