@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import type { Session, User } from '@supabase/supabase-js'
 import type { Tables } from 'database/types'
 import { profilesQuery } from '@/utils/supaQueries'
+import { supabase } from '@/lib/supabaseClient'
 
 export const useAuthStore = defineStore('auth-store', () => {
   const user = ref<User | null>(null)
@@ -37,7 +38,14 @@ export const useAuthStore = defineStore('auth-store', () => {
     }
   }
 
-  return { user, profile, setAuth }
+  const getSession = async () => {
+    const { data } = await supabase.auth.getSession()
+    if (data.session?.user) {
+      setAuth(data.session)
+    }
+  }
+
+  return { user, profile, setAuth, getSession }
 })
 
 if (import.meta.hot) {

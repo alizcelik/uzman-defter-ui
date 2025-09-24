@@ -2,13 +2,15 @@
 import AuthLayout from '@/components/layout/main/AuthLayout.vue'
 import { useErrorStore } from './stores/error'
 import AppErrorPage from './components/apperror/AppErrorPage.vue'
-import { onErrorCaptured } from 'vue'
+import { onErrorCaptured, onMounted } from 'vue'
 
 const errorStore = useErrorStore()
 
 onErrorCaptured((error) => {
   errorStore.setError({ error })
 })
+
+onMounted(async () => {})
 </script>
 
 <template>
