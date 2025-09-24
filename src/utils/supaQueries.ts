@@ -28,3 +28,7 @@ export const projectQuery = (slug: string) =>
     .single()
 
 export type Project = QueryData<ReturnType<typeof projectQuery>>
+
+export const profilesQuery = (id: string) => {
+  return supabase.from('profiles').select('*').eq('id', id).single()
+}
