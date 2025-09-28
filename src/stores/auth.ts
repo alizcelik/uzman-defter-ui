@@ -34,6 +34,7 @@ export const useAuthStore = defineStore('auth-store', () => {
       await setProfile()
     } else {
       user.value = null
+      profile.value = null
       return
     }
   }

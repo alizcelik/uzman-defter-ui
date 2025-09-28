@@ -14,9 +14,11 @@ const accountLinks = [
   { title: 'Sign out', icon: 'lucide:log-out' },
 ]
 
-const executeAction = (action: string) => {
+const executeAction = async (action: string) => {
   if (action === 'Sign out') {
     // Handle sign out logic here
+    const { logout } = await import('@/utils/supaAuth')
+    await logout()
     console.log('Signing out...')
   } else {
     console.log(`Action clicked: ${action}`)
