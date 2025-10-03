@@ -1,8 +1,6 @@
 import { supabase } from '@/lib/supabaseClient'
-import { useAuthStore } from '@/stores/auth'
-import type { LoginForm, RegisterForm } from '@/types/AuthForm'
 
-const authStore = useAuthStore()
+import type { LoginForm, RegisterForm } from '@/types/AuthForm'
 
 export const register = async (formData: RegisterForm) => {
   const { email, password, username, firstName, lastName } = formData
@@ -35,7 +33,6 @@ export const register = async (formData: RegisterForm) => {
     return false
   }
 
-  await authStore.setAuth(data.session)
   return true
 }
 
@@ -53,7 +50,6 @@ export const login = async (formData: LoginForm) => {
     return false
   }
 
-  await authStore.setAuth(data.session)
   return true
 }
 
@@ -65,6 +61,5 @@ export const logout = async () => {
   }
 
   console.log('User logged out successfully')
-  await authStore.setAuth()
   return true
 }

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import SidebarLinks from './SidebarLinks.vue'
 import { Button } from '@/components/ui/button'
 
@@ -14,12 +15,17 @@ const accountLinks = [
   { title: 'Sign out', icon: 'lucide:log-out' },
 ]
 
+const router = useRouter()
+
 const executeAction = async (action: string) => {
   if (action === 'Sign out') {
     // Handle sign out logic here
     const { logout } = await import('@/utils/supaAuth')
-    await logout()
+    const isLoggedOut = await logout()
     console.log('Signing out...')
+    if (isLoggedOut) {
+      router.push('/login')
+    }
   } else {
     console.log(`Action clicked: ${action}`)
   }
