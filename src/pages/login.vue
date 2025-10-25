@@ -7,18 +7,27 @@ import { Separator } from '@/components/ui/separator'
 import { login } from '@/utils/supaAuth'
 import { useRouter } from 'vue-router'
 import { useFormErrors } from '@/composables/formErrors'
+import { watchDebounced } from '@vueuse/core'
+import { ref } from 'vue'
 
 const { serverError, handleServerError, realTimeErrors, handleLoginForm } = useFormErrors()
 
-const formData = {
+const formData = ref({
   email: '',
   password: '',
-}
-
+})
 const router = useRouter()
 
+watchDebounced(
+  formData,
+  () => {
+    handleLoginForm(formData.value)
+  },
+  { debounce: 1000, deep: true },
+)
+
 const signIn = async () => {
-  const { error } = await login(formData)
+  const { error } = await login(formData.value)
   if (!error) {
     router.push('/')
   } else {
@@ -49,7 +58,6 @@ const signIn = async () => {
               required
               v-model="formData.email"
               :class="{ 'border-red-600': serverError }"
-              @input="handleLoginForm(formData)"
             />
             <ul class="text-sm text-red-600 mb-2" v-if="realTimeErrors?.email.length">
               <li v-for="error in realTimeErrors.email" :key="error">{{ error }}</li>
@@ -67,7 +75,6 @@ const signIn = async () => {
               required
               v-model="formData.password"
               :class="{ 'border-red-600': serverError }"
-              @input="handleLoginForm(formData)"
             />
           </div>
           <ul class="text-sm text-red-600 mb-2" v-if="realTimeErrors?.password.length">
