@@ -6,14 +6,15 @@ import Label from '@/components/ui/label/Label.vue'
 import { Separator } from '@/components/ui/separator'
 import { login } from '@/utils/supaAuth'
 import { useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { useFormErrors } from '@/composables/formErrors'
+
+const { serverError, handleServerError, realTimeErrors, handleLoginForm } = useFormErrors()
 
 const formData = {
   email: '',
   password: '',
 }
 
-const _error = ref<string | null>(null)
 const router = useRouter()
 
 const signIn = async () => {
@@ -21,7 +22,7 @@ const signIn = async () => {
   if (!error) {
     router.push('/')
   } else {
-    _error.value = error.message
+    handleServerError(error)
   }
 }
 </script>
@@ -47,8 +48,12 @@ const signIn = async () => {
               placeholder="johndoe19@example.com"
               required
               v-model="formData.email"
-              :class="{ 'border-red-600': _error }"
+              :class="{ 'border-red-600': serverError }"
+              @input="handleLoginForm(formData)"
             />
+            <ul class="text-sm text-red-600 mb-2" v-if="realTimeErrors?.email.length">
+              <li v-for="error in realTimeErrors.email" :key="error">{{ error }}</li>
+            </ul>
           </div>
           <div class="grid gap-2">
             <div class="flex items-center">
@@ -61,11 +66,15 @@ const signIn = async () => {
               autocomplete
               required
               v-model="formData.password"
-              :class="{ 'border-red-600': _error }"
+              :class="{ 'border-red-600': serverError }"
+              @input="handleLoginForm(formData)"
             />
           </div>
-          <ul class="text-sm text-red-600 mb-2" v-if="_error">
-            <li>{{ _error }}</li>
+          <ul class="text-sm text-red-600 mb-2" v-if="realTimeErrors?.password.length">
+            <li v-for="error in realTimeErrors.password" :key="error">{{ error }}</li>
+          </ul>
+          <ul class="text-sm text-red-600 mb-2" v-if="serverError">
+            <li>{{ serverError }}</li>
           </ul>
           <Button type="submit" class="w-full"> Login </Button>
         </form>
