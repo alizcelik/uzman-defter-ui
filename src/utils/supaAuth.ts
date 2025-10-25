@@ -38,19 +38,9 @@ export const register = async (formData: RegisterForm) => {
 
 export const login = async (formData: LoginForm) => {
   const { email, password } = formData
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-  if (error) {
-    console.error('Error logging in:', error)
-    return { error }
-  }
+  const { error } = await supabase.auth.signInWithPassword({ email, password })
 
-  console.log('User logged in successfully:', data)
-
-  if (!data.user) {
-    return false
-  }
-
-  return true
+  return { error }
 }
 
 export const logout = async () => {

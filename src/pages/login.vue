@@ -6,18 +6,22 @@ import Label from '@/components/ui/label/Label.vue'
 import { Separator } from '@/components/ui/separator'
 import { login } from '@/utils/supaAuth'
 import { useRouter } from 'vue-router'
+import { ref } from 'vue'
 
 const formData = {
   email: '',
   password: '',
 }
 
+const _error = ref<string | null>(null)
 const router = useRouter()
 
 const signIn = async () => {
-  const isLoggedIn = await login(formData)
-  if (isLoggedIn) {
+  const { error } = await login(formData)
+  if (!error) {
     router.push('/')
+  } else {
+    _error.value = error.message
   }
 }
 </script>
@@ -43,6 +47,7 @@ const signIn = async () => {
               placeholder="johndoe19@example.com"
               required
               v-model="formData.email"
+              :class="{ 'border-red-600': _error }"
             />
           </div>
           <div class="grid gap-2">
@@ -56,8 +61,12 @@ const signIn = async () => {
               autocomplete
               required
               v-model="formData.password"
+              :class="{ 'border-red-600': _error }"
             />
           </div>
+          <ul class="text-sm text-red-600 mb-2" v-if="_error">
+            <li>{{ _error }}</li>
+          </ul>
           <Button type="submit" class="w-full"> Login </Button>
         </form>
         <div class="mt-4 text-sm text-center">
