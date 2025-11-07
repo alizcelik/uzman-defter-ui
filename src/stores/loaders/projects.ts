@@ -1,4 +1,10 @@
-import { type Project, projectQuery, type Projects, projectsQuery } from '@/utils/supaQueries'
+import {
+  type Project,
+  projectQuery,
+  type Projects,
+  projectsQuery,
+  updateProjectQuery,
+} from '@/utils/supaQueries'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useErrorStore } from '../error'
@@ -67,10 +73,20 @@ export const useProjectsStore = defineStore('projects-store', () => {
     validateCache({ ref: project, query: projectQuery, key: slug, loaderFn: loadProject })
   }
 
+  const updateProject = async () => {
+    if (!project.value) return
+
+    const { tasks, id, ...projectProperties } = project.value
+    void tasks
+    console.log('Updating project with id:', id, 'Properties:', projectProperties)
+    await updateProjectQuery(projectProperties, id)
+  }
+
   return {
     projects,
     getProjects,
     project,
     getProject,
+    updateProject,
   }
 })

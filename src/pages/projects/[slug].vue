@@ -13,19 +13,20 @@ import TableBody from '@/components/ui/table/TableBody.vue'
 import { usePageStore } from '@/stores/page'
 import { useProjectsStore } from '@/stores/loaders/projects'
 import { storeToRefs } from 'pinia'
+import AppInPlaceEditText from '@/components/AppInPlaceEdit/AppInPlaceEditText.vue'
 
 const route = useRoute('/projects/[slug]')
 
 const projectsLoader = useProjectsStore()
 const { project } = storeToRefs(projectsLoader)
-const { getProject } = projectsLoader
+const { getProject, updateProject } = projectsLoader
 
 usePageStore().pageData.title = `Project: ${project.value?.name || ''}`
 
 watch(
-  () => project.value,
-  (newProject) => {
-    usePageStore().pageData.title = `Project: ${newProject?.name || ''}`
+  () => project.value?.name,
+  () => {
+    usePageStore().pageData.title = `Project: ${project.value?.name || ''}`
   },
 )
 
@@ -36,12 +37,14 @@ await getProject(route.params.slug as string)
   <Table v-if="project">
     <TableRow>
       <TableHead> Name </TableHead>
-      <TableCell>{{ project?.name }} </TableCell>
+      <TableCell>
+        <AppInPlaceEditText v-model="project.name" @commit="updateProject" />
+      </TableCell>
     </TableRow>
     <TableRow>
       <TableHead> Description </TableHead>
       <TableCell>
-        {{ project?.description || 'No description provided.' }}
+        <AppInPlaceEditText v-model="project.description" @commit="updateProject" />
       </TableCell>
     </TableRow>
     <TableRow>
