@@ -14,6 +14,7 @@ import { usePageStore } from '@/stores/page'
 import { useProjectsStore } from '@/stores/loaders/projects'
 import { storeToRefs } from 'pinia'
 import AppInPlaceEditText from '@/components/AppInPlaceEdit/AppInPlaceEditText.vue'
+import AppInPlaceEditStatus from '@/components/AppInPlaceEdit/AppInPlaceEditStatus.vue'
 
 const route = useRoute('/projects/[slug]')
 
@@ -49,7 +50,9 @@ await getProject(route.params.slug as string)
     </TableRow>
     <TableRow>
       <TableHead> Status </TableHead>
-      <TableCell>{{ project?.status || 'Unknown' }}</TableCell>
+      <TableCell>
+        <AppInPlaceEditStatus v-model="project.status" @commit="updateProject" />
+      </TableCell>
     </TableRow>
     <TableRow>
       <TableHead> Collaborators </TableHead>
