@@ -1,12 +1,12 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { ref } from 'vue'
+import { supabase } from '@/lib/supabaseClient'
+import { profileQuery } from '@/utils/supaQueries'
 import type { Session, User } from '@supabase/supabase-js'
 import type { Tables } from 'database/types'
-import { profilesQuery } from '@/utils/supaQueries'
-import { supabase } from '@/lib/supabaseClient'
 
 export const useAuthStore = defineStore('auth-store', () => {
-  const user = ref<User | null>(null)
+  const user = ref<null | User>(null)
   const profile = ref<null | Tables<'profiles'>>(null)
   const isTrackingAuthChanges = ref(false)
 
@@ -17,48 +17,49 @@ export const useAuthStore = defineStore('auth-store', () => {
     }
 
     if (!profile.value || profile.value.id !== user.value.id) {
-      const { data, error } = await profilesQuery({ column: 'id', value: user.value.id })
-      if (error) {
-        console.error('Error fetching profile:', error)
-        profile.value = null
-        return
-      }
-      profile.value = data
-      console.log('Profile fetched successfully:', data)
+      const { data } = await profileQuery({
+        column: 'id',
+        value: user.value.id,
+      })
+
+      profile.value = data || null
     }
   }
 
   const setAuth = async (userSession: null | Session = null) => {
-    console.log('Setting auth session:', userSession)
-    if (userSession) {
-      user.value = userSession.user
-      await setProfile()
-    } else {
+    if (!userSession) {
       user.value = null
       profile.value = null
       return
     }
+
+    user.value = userSession.user
+    await setProfile()
   }
 
   const getSession = async () => {
     const { data } = await supabase.auth.getSession()
-    if (data.session?.user) {
-      setAuth(data.session)
-    }
+    if (data.session?.user) await setAuth(data.session)
   }
 
   const trackAuthChanges = () => {
     if (isTrackingAuthChanges.value) return
-    isTrackingAuthChanges.value = true
 
+    isTrackingAuthChanges.value = true
     supabase.auth.onAuthStateChange((event, session) => {
       setTimeout(async () => {
-        await useAuthStore().setAuth(session)
+        await setAuth(session)
       }, 0)
     })
   }
 
-  return { user, profile, setAuth, getSession, trackAuthChanges }
+  return {
+    user,
+    profile,
+    setAuth,
+    getSession,
+    trackAuthChanges,
+  }
 })
 
 if (import.meta.hot) {

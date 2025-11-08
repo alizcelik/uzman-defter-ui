@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import { profilesQuery, projectsQuery } from '@/utils/supaQueries'
+import { useAuthStore } from '@/stores/auth'
+import type { CreateNewTask } from '@/types/CreateNewForm'
+import { createNewTaskQuery, profilesQuery, projectsQuery } from '@/utils/supaQueries'
+import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
-const sheetOpen = defineModel<boolean>()
 
-interface NewTaskForm {
-  taskTitle?: string
-  taskDescription?: string
-  dueDate?: string
-}
+const sheetOpen = defineModel<boolean>()
 
 type SelectOption = { label: string; value: number | string }
 
@@ -43,16 +41,28 @@ const getProfilesOptions = async () => {
   })
 }
 
-const createTask = (data: NewTaskForm) => {
-  console.log('Form submitted with data:', data)
-  // Here you can handle the form submission, e.g., send data to an API
-  sheetOpen.value = false // Close the sheet after submission
-}
 const getOptions = async () => {
   await Promise.all([getProjectsOptions(), getProfilesOptions()])
 }
 
 getOptions()
+
+const { profile } = storeToRefs(useAuthStore())
+
+const createTask = async (formData: CreateNewTask) => {
+  const task = {
+    ...formData,
+    collaborators: [profile.value!.id],
+  }
+
+  const { error } = await createNewTaskQuery(task)
+
+  if (error) {
+    console.log(error)
+  }
+
+  sheetOpen.value = false
+}
 </script>
 
 <template>
@@ -62,23 +72,39 @@ getOptions()
         <SheetTitle>Create new task</SheetTitle>
       </SheetHeader>
 
-      <FormKit type="form" @submit="createTask" submit-label="Create Task">
-        <FormKit type="text" name="name" id="name" label="Name" placeholder="My new task" />
+      <FormKit
+        type="form"
+        @submit="createTask"
+        submit-label="Create Task"
+        :config="{
+          validationVisibility: 'submit',
+        }"
+      >
         <FormKit
-          type="select"
-          name="for"
-          id="for"
-          label="For"
-          placeholder="Select a user"
-          :options="selectOptions.profiles"
+          type="text"
+          name="name"
+          id="name"
+          label="Name"
+          placeholder="My new task"
+          validation="required|length:1,255"
         />
         <FormKit
           type="select"
-          name="project"
-          id="project"
+          name="profile_id"
+          id="profile_id"
+          label="User"
+          placeholder="Select a user"
+          :options="selectOptions.profiles"
+          validation="required"
+        />
+        <FormKit
+          type="select"
+          name="project_id"
+          id="project_id"
           label="Porject"
           placeholder="Select a project"
           :options="selectOptions.projects"
+          validation="required"
         />
         <FormKit
           type="textarea"
@@ -86,6 +112,7 @@ getOptions()
           id="description"
           label="Description"
           placeholder="Task description"
+          validation="length:0,500"
         />
       </FormKit>
     </SheetContent>
