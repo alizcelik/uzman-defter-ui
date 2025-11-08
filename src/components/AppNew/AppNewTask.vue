@@ -10,7 +10,7 @@ const sheetOpen = defineModel<boolean>()
         <SheetTitle>Create new task</SheetTitle>
       </SheetHeader>
 
-      <p>Content</p>
+      <FormKit type="text" id="new-task-form" class="space-y-4" />
     </SheetContent>
   </Sheet>
 </template>
