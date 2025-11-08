@@ -15,6 +15,8 @@ import { useProjectsStore } from '@/stores/loaders/projects'
 import { storeToRefs } from 'pinia'
 import AppInPlaceEditText from '@/components/AppInPlaceEdit/AppInPlaceEditText.vue'
 import AppInPlaceEditStatus from '@/components/AppInPlaceEdit/AppInPlaceEditStatus.vue'
+import { useCollabs } from '@/composables/collabs'
+import AppInPlaceEditTextArea from '@/components/AppInPlaceEdit/AppInPlaceEditTextArea.vue'
 
 const route = useRoute('/projects/[slug]')
 
@@ -32,6 +34,12 @@ watch(
 )
 
 await getProject(route.params.slug as string)
+
+const { getProfilesByIds } = useCollabs()
+
+const collabs = project.value?.collaborators
+  ? await getProfilesByIds(project.value.collaborators)
+  : []
 </script>
 
 <template>
@@ -45,7 +53,7 @@ await getProject(route.params.slug as string)
     <TableRow>
       <TableHead> Description </TableHead>
       <TableCell>
-        <AppInPlaceEditText v-model="project.description" @commit="updateProject" />
+        <AppInPlaceEditTextArea v-model="project.description" @commit="updateProject" />
       </TableCell>
     </TableRow>
     <TableRow>
@@ -60,11 +68,14 @@ await getProject(route.params.slug as string)
         <div class="flex">
           <Avatar
             class="-mr-4 border border-primary hover:scale-110 transition-transform"
-            v-for="collab in project?.collaborators"
-            :key="collab"
+            v-for="collab in collabs"
+            :key="collab.id"
           >
-            <RouterLink class="w-full h-full flex items-center justify-center" to="">
-              <AvatarImage src="" alt="" />
+            <RouterLink
+              class="w-full h-full flex items-center justify-center"
+              :to="{ name: '/users/[username]', params: { username: collab.username } }"
+            >
+              <AvatarImage :src="collab.avatar_url || ''" :alt="collab.username" />
               <AvatarFallback> </AvatarFallback>
             </RouterLink>
           </Avatar>
@@ -87,8 +98,17 @@ await getProject(route.params.slug as string)
           </TableHeader>
           <TableBody>
             <TableRow v-for="task in project.tasks" :key="task.id">
-              <TableCell>{{ task.name }}</TableCell>
-              <TableCell>{{ task.status }}</TableCell>
+              <TableCell>
+                <RouterLink
+                  class="text-left block hover:bg-muted p-4"
+                  :to="{ name: '/tasks/[id]', params: { id: task.id } }"
+                >
+                  {{ task.name }}
+                </RouterLink>
+              </TableCell>
+              <TableCell>
+                <AppInPlaceEditStatus v-model="task.status" readonly />
+              </TableCell>
               <TableCell>{{ task.due_date }}</TableCell>
             </TableRow>
           </TableBody>

@@ -17,10 +17,13 @@
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { useErrorStore } from '@/stores/error'
+import { usePageStore } from '@/stores/page'
 import { profilesQuery } from '@/utils/supaQueries'
 import type { Tables } from 'database/types'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
+
+usePageStore().pageData.title = ''
 
 const profile = ref<Tables<'profiles'> | null>(null)
 const { username } = useRoute('/users/[username]').params
